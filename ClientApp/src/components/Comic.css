@@ -66,3 +66,17 @@
     border-radius: 8px;
   }
   
+  .card-table {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: -16px;
+  }
+  
+  .card-row {
+    display: flex;
+    flex: 1;
+    margin: 16px;
+  }
+  
+  

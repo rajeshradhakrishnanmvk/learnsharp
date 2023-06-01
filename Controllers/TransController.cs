@@ -20,15 +20,13 @@ namespace learnsharp.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly string  _apiUrl;
-        private readonly string _apiKey;
 
         private readonly ILogger<TransController> _logger;
         public TransController(ILogger<TransController> logger, HttpClient httpClient,IOptions<AppSettings> appSettings)
         {
             _logger = logger;
             _httpClient = httpClient;
-            _apiKey = appSettings.Value.ApiKey;
-            _apiUrl = appSettings.Value.ApiUrl;
+            _apiUrl = appSettings.Value.TransUrl;
         }
 
     [HttpPost]
@@ -36,7 +34,7 @@ namespace learnsharp.Controllers
     {
         try
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var json = JsonSerializer.Serialize(new
@@ -51,12 +49,12 @@ namespace learnsharp.Controllers
             response.EnsureSuccessStatusCode();
 
             var responseJson = await response.Content.ReadAsStringAsync();
-            List<TransResponse> responses = JsonSerializer.Deserialize<List<TransResponse>>(responseJson);
+            var responseData = Encoding.UTF8.GetString(Encoding.Default.GetBytes(responseJson));
 
-            TransResponse translation = responses.FirstOrDefault();
+            TransResponse responses = JsonSerializer.Deserialize<TransResponse>(responseData);
 
-            var data = RemoveSpecialCharacters(translation.output);
-            //_logger.LogInformation(data);
+            var data = responses.output;
+            
             return Ok(new {output = data});
         }
         catch (Exception ex)
