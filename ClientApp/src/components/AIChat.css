@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap');
+
+ .chat-all{
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+} 
+.chat-app {
+    margin: 0;
+    padding: 0;
+    background-color: #343541;
+    display: flex;
+}
+.chat-h1{
+    font-size: 33px;
+    font-weight: 600;
+    padding: 200px 0;
+}
+.chat-side-bar{
+    background-color: #202123;
+    width: 244px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.chat-main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+    height: 100vh;
+    width: 100%;
+}
+
+.chat-bottom-section{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.chat-info{
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    padding: 10px;
+}
+
+.chat-input{
+    border: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    font-size: 20px;
+    padding: 12px 15px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 54px 55px,
+    rgba(0, 0, 0, 0.5) 0 -12 30px,
+    rgba(0, 0, 0, 0.5) 0 4px 6px,
+    rgba(0, 0, 0, 0.5) 0 12px 3px,
+    rgba(0, 0, 0, 0.5) 0 -3px 5px;
+
+}
+.chat-input:focus{
+    outline: none;
+}
+
+.chat-input-container{
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+}
+
+.chat-input-container #submit{
+    position: absolute;
+    right: 0;
+    bottom: 15px;
+    cursor: pointer;
+}
+
+.chat-btn{
+    border: solid 0.5px rgba(255, 255, 255, 0.5);
+    background-color: transparent;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+}
+
+nav{
+    border-top: solid 0.5px rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    margin: 10px;
+}
+
+.chat-history{
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-history p{
+    cursor: pointer;
+}
+
+.chat-feed{
+    overflow: scroll;
+    width: 100%;
+    padding: 0;
+}
+
+.chat-feed li{
+    display: flex;
+    background-color: #444654;
+    width: 100%;
+    padding: 20px;
+    margin: 20px 0;
+}
+.chat-feed p{
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    text-align: left;
+}
+
+.chat-feed-role {
+    min-width: 100px;
+}
