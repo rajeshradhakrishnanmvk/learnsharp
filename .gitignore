@@ -232,3 +232,5 @@ _Pvt_Extensions
 .fake/
 
 package-lock.json
+appsettings.json
+appsettings.*.json

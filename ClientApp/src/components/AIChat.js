@@ -37,28 +37,7 @@ export class AIChat extends Component {
       }
     }
     componentDidMount() {
-      
-      // console.log(this.state.currentTitle, this.state.value, this.state.message);
-      // if (!this.state.currentTitle && this.state.value && this.state.message) {
-      //   this.setState((prevState) => ({ currentTitle: prevState.value }));
-      // }
-      // if (this.state.currentTitle && this.state.value && this.state.message) {
-      //   this.setState((prevState) => ({
-      //     previousChat: [
-      //       ...prevState.previousChat,
-      //       {
-      //         title: prevState.currentTitle,
-      //         role: 'user',
-      //         content: prevState.value,
-      //       },
-      //       {
-      //         title: prevState.currentTitle,
-      //         role: 'assistant',
-      //         content: prevState.message,
-      //       },
-      //     ],
-      //   }));
-      // }
+
     }
     componentDidUpdate(prevProps, prevState) {
       //this.updatePreviousChat();
@@ -96,6 +75,40 @@ export class AIChat extends Component {
       this.setState({message: ''})
       this.setState({value: ''})
       this.setState({currentTitle: ''})
+    }
+
+    async saveChat()
+    {
+        try {
+          const response = await fetch('savechat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(this.state.previousChat),
+          });
+      
+          if (response.ok) {
+            console.log('Chat state saved successfully');
+          } else {
+            console.error('Failed to save chat state:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+    }
+    
+    fecthChat(){
+      fetch('savechat')
+      .then(response => response.json())
+      .then(data => {
+          // Assuming the response data is an array of chat messages
+          this.setState({ previousChat: data });
+      })
+      .catch(error => {
+          // Handle error
+          console.error('Error:', error);
+      });
     }
     handleClick(uniqueTitle){
       this.setState({currentTitle: uniqueTitle})
@@ -140,7 +153,9 @@ export class AIChat extends Component {
         return (
             <div className='chat-all chat-app'>
             <section className='chat-side-bar'>
+                {this.state.previousChat.length === 0 && <button className='chat-btn' onClick={() => this.fecthChat()}>Fetch Chat</button>}
                 <button className='chat-btn' onClick={() => this.createNewChat()}>+ New Chat</button>
+                {this.state.previousChat.length > 0 && <button className='chat-btn' onClick={() => this.saveChat()}>Save Chat</button>}
                 <ul className='chat-history'>
                   {uniqueTitles?.map((uniqueTitle, index) => <li key={index} onClick={() => this.handleClick(uniqueTitle)}>{uniqueTitle}</li>) }
                 </ul>
