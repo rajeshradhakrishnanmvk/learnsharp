@@ -1,0 +1,38 @@
+.image-panel {
+    padding: 16px;
+    background-color: #f2f2f2;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .image-panel h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  /* .image-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 16px;
+  }
+  
+  .image-list img {
+    width: 100%;
+    height: auto;
+  } */
+  
+  .image-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .image-table td {
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .image-table img {
+    max-width: 100%;
+    height: auto;
+  }
+  
