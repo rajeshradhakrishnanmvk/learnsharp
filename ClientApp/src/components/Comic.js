@@ -1,6 +1,7 @@
 import React, { Component  } from 'react';
 import './Comic.css'
 import ImagePanel from './ImagePanel';
+import TopPanel from './TopPanel';
 
 import { FaThumbsUp, FaComment, FaShare } from 'react-icons/fa';
 export class Comic extends Component {
@@ -8,9 +9,7 @@ export class Comic extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { comic_chats: [], loading: true
-                      ,imageSrc: "https://gramener.com/comicgen/v1/comic?name=dee&angle=side&emotion=angry&pose=explaining&box=&boxcolor=%23000000&boxgap=&mirror="
-                      }
+        this.state = { comic_chats: [], loading: true, assistantChats: [] }
     }
     
     componentDidMount() {
@@ -18,18 +17,39 @@ export class Comic extends Component {
     }
 
     static renderComicStrips(that_comic){
-    var previousChat = that_comic.state.comic_chats.filter(prevChat => prevChat.role === 'assistant');
-    const rows = Math.ceil(previousChat.length / 3);
-    const cards = [];
+    // var assistantChat = that_comic.state.comic_chats
+    //                   .filter(prevChat => prevChat.role === 'assistant')
+    //                   .map(chat => ({
+    //                     ...chat,
+    //                     imageSrc: "https://gramener.com/comicgen/v1/comic?name=dee&angle=side&emotion=angry&pose=explaining&box=&boxcolor=%23000000&boxgap=&mirror=" 
+    //                   }));
+    
+    //that_comic.setState({assistantChats: assistantChat });
+    
+  
+
     const handleDragOver = (event) => {
       event.preventDefault();
     };
 
-    const handleDrop = (event) => {
+    const handleDrop = (event, i, index) => {
       event.preventDefault();
       const draggedImageSrc = event.dataTransfer.getData('text/plain');
-      that_comic.setState({imageSrc : draggedImageSrc});
+      that_comic.setState(prevState => {
+        console.log(prevState);
+        const updatedCards = prevState.assistantChats.map((chat, cardIndex) => {
+          if (cardIndex === i * 3 + index) {
+            return {
+              ...chat,
+              imageSrc: draggedImageSrc
+            };
+          }
+          return chat;
+        });
+        return { assistantChats: updatedCards };
+      });
     };
+    
     const handleButtonClick = async (i,index,content) => {
         try {
 
@@ -59,14 +79,17 @@ export class Comic extends Component {
             console.error('Error:', error);
           }
       };
+      var assistantChat = that_comic.state.assistantChats
+      const rows = Math.ceil(assistantChat.length / 3);
+      const cards = [];
         for (let i = 0; i < rows; i++) {
-                const rowCards = previousChat.slice(i * 3, i * 3 + 3);
+                const rowCards = assistantChat.slice(i * 3, i * 3 + 3);
                 const row = (
                     <div className="card-row" key={i}>
                     {rowCards.map((chat, index) => (
-                        <div className="card" key={index} onDragOver={handleDragOver} onDrop={handleDrop}>
+                        <div className="card" key={index} onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, i, index)}>
                             <div className="card-header">
-                                  <img src={that_comic.state.imageSrc} alt="Profile" className="profile-image" />
+                                  <img src={chat.imageSrc} alt="Profile" className="profile-image" />
                                 <div className="profile-info">
                                 <h3>{chat.role}</h3>
                                 <p>{chat.title}</p>
@@ -114,6 +137,9 @@ export class Comic extends Component {
             <ImagePanel />
             </section>
             <section className='comic-main'>
+              <div className="comic-top-bar">
+                <TopPanel />
+              </div>
               <div className="card-table">{contents}</div>
             </section>
         </div>
@@ -123,7 +149,12 @@ export class Comic extends Component {
         fetch('savechat')
         .then(response => response.json())
         .then(data => {
-            this.setState({ comic_chats: data, loading: false});
+             var assistantChat=data.filter(prevChat => prevChat.role === 'assistant')
+                      .map(chat => ({
+                        ...chat,
+                        imageSrc: "https://gramener.com/comicgen/v1/comic?name=dee&angle=side&emotion=angry&pose=explaining&box=&boxcolor=%23000000&boxgap=&mirror=" 
+                      }));
+            this.setState({ comic_chats: data, loading: false, assistantChats: assistantChat });
         })
         .catch(error => {
             console.error('Error:', error);

@@ -1,0 +1,25 @@
+.top-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #f0f2f5;
+  }
+  
+  .language-list {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .language-item {
+    padding: 8px 12px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .selected-language {
+    font-weight: bold;
+  }
+  

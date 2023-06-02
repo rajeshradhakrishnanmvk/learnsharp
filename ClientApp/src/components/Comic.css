@@ -105,3 +105,9 @@
     flex-direction: column;
     justify-content: space-between;
 }  
+
+.comic-top-bar {
+  background-color: #f0f0f0;
+  padding: 10px;
+}
+
