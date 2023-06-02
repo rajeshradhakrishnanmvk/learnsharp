@@ -2,11 +2,11 @@ import React, { Component  } from 'react';
 import './Comic.css'
 import ImagePanel from './ImagePanel';
 import TopPanel from './TopPanel';
+import Spinner from './Spinner';
 
 import { FaThumbsUp, FaComment, FaShare } from 'react-icons/fa';
 export class Comic extends Component {
     static displayName = Comic.name;
-
     constructor(props) {
         super(props);
         this.state = { comic_chats: [], loading: true, assistantChats: [] }
@@ -34,6 +34,18 @@ export class Comic extends Component {
 
     const handleDrop = (event, i, index, identifier) => {
       event.preventDefault();
+      that_comic.setState(prevState => {
+        const updatedCards = prevState.assistantChats.map((chat, cardIndex) => {
+          if (cardIndex === i * 3 + index) {
+            return {
+              ...chat,
+              loadingStates: true
+            };
+          }
+          return chat;
+        });
+        return { assistantChats: updatedCards };
+      });
       switch (identifier) {
         case 'image-drop':
           const language = event.dataTransfer.getData('text');
@@ -54,7 +66,9 @@ export class Comic extends Component {
                           return prevChat.content
                         }
                       })
+            
             handleTrans(i,index,chat[0].content,language);
+
             break;
           default:
             const draggedImageSrc = event.dataTransfer.getData('text/plain');
@@ -75,7 +89,7 @@ export class Comic extends Component {
         default:
           break;
       }
-      
+
     };
 
     const handleTrans = async (i,index,text,lang) => {
@@ -93,10 +107,21 @@ export class Comic extends Component {
             });
             if (response.ok) {
               const data = await response.json();
-            
-              console.log(data.output);
-              const pElement = document.querySelector('#card-content-' + i + '-' + index)
-              pElement.textContent = data.output
+              // const pElement = document.querySelector('#card-content-' + i + '-' + index)
+              // pElement.textContent = data.output
+              that_comic.setState(prevState => {
+                const updatedCards = prevState.assistantChats.map((chat, cardIndex) => {
+                  if (cardIndex === i * 3 + index) {
+                    return {
+                      ...chat,
+                      content: data.output,
+                      loadingStates: false
+                    };
+                  }
+                  return chat;
+                });
+                return { assistantChats: updatedCards };
+              });
               
             } else {
               // Handle error response
@@ -125,9 +150,13 @@ export class Comic extends Component {
                                 </div>
                             </div>
                             <div className="card-content">
-                                <p id={`card-content-${i}-${index}`} onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, i, index)}>
-                                {chat.content}
+                            {chat.loadingStates ? (
+                                  <Spinner /> 
+                                ) : (
+                                  <p id={`card-content-${i}-${index}`} onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, i, index)}>
+                                  {chat.content}
                                 </p>
+                                )}
                             </div>
                             <div className="card-actions">
                                 <button className="card-button">
@@ -180,7 +209,8 @@ export class Comic extends Component {
              var assistantChat=data.filter(prevChat => prevChat.role === 'assistant')
                       .map(chat => ({
                         ...chat,
-                        imageSrc: "https://gramener.com/comicgen/v1/comic?name=dee&angle=side&emotion=angry&pose=explaining&box=&boxcolor=%23000000&boxgap=&mirror=" 
+                        imageSrc: "https://gramener.com/comicgen/v1/comic?name=dee&angle=side&emotion=angry&pose=explaining&box=&boxcolor=%23000000&boxgap=&mirror=" ,
+                        loadingStates: false
                       }));
             this.setState({ comic_chats: data, loading: false, assistantChats: assistantChat });
         })
