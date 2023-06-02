@@ -32,25 +32,53 @@ export class Comic extends Component {
       event.preventDefault();
     };
 
-    const handleDrop = (event, i, index) => {
+    const handleDrop = (event, i, index, identifier) => {
       event.preventDefault();
-      const draggedImageSrc = event.dataTransfer.getData('text/plain');
-      that_comic.setState(prevState => {
-        console.log(prevState);
-        const updatedCards = prevState.assistantChats.map((chat, cardIndex) => {
-          if (cardIndex === i * 3 + index) {
-            return {
-              ...chat,
-              imageSrc: draggedImageSrc
-            };
+      switch (identifier) {
+        case 'image-drop':
+          const language = event.dataTransfer.getData('text');
+          switch(language){
+          case 'Malayalam':
+          case 'Bengali':
+          case 'Gujarati':
+          case 'Hindi':
+          case 'Kannada':
+          case 'Marathi':
+          case 'Odia':
+          case 'Punjabi':
+          case 'Tamil':
+          case 'Telugu':
+            var chat = that_comic.state.assistantChats
+                       .filter((prevChat, idx) => {
+                        if(idx === i * 3 + index){
+                          return prevChat.content
+                        }
+                      })
+            handleTrans(i,index,chat[0].content,language);
+            break;
+          default:
+            const draggedImageSrc = event.dataTransfer.getData('text/plain');
+            that_comic.setState(prevState => {
+              const updatedCards = prevState.assistantChats.map((chat, cardIndex) => {
+                if (cardIndex === i * 3 + index) {
+                  return {
+                    ...chat,
+                    imageSrc: draggedImageSrc
+                  };
+                }
+                return chat;
+              });
+              return { assistantChats: updatedCards };
+            });
           }
-          return chat;
-        });
-        return { assistantChats: updatedCards };
-      });
+          break;
+        default:
+          break;
+      }
+      
     };
-    
-    const handleButtonClick = async (i,index,content) => {
+
+    const handleTrans = async (i,index,text,lang) => {
         try {
 
             const response = await fetch('trans', {
@@ -59,8 +87,8 @@ export class Comic extends Component {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                text: content,
-                lang: "Malayalam"
+                text: text,
+                lang: lang
               })
             });
             if (response.ok) {
@@ -87,7 +115,7 @@ export class Comic extends Component {
                 const row = (
                     <div className="card-row" key={i}>
                     {rowCards.map((chat, index) => (
-                        <div className="card" key={index} onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, i, index)}>
+                        <div className="card" key={index} onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, i, index, 'image-drop')}>
                             <div className="card-header">
                                   <img src={chat.imageSrc} alt="Profile" className="profile-image" />
                                 <div className="profile-info">
@@ -97,7 +125,7 @@ export class Comic extends Component {
                                 </div>
                             </div>
                             <div className="card-content">
-                                <p id={`card-content-${i}-${index}`}>
+                                <p id={`card-content-${i}-${index}`} onDragOver={handleDragOver} onDrop={(event) => handleDrop(event, i, index)}>
                                 {chat.content}
                                 </p>
                             </div>

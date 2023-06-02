@@ -21,6 +21,7 @@ const ImagePanel = () => {
             <tr key={index}>
               <td>
                 <img
+                  id={`Image ${index + 1}`}
                   src={imageUrl}
                   alt={`Image ${index + 1}`}
                   draggable="true"
