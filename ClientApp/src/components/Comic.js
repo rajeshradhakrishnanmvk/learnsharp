@@ -163,9 +163,9 @@ export class Comic extends Component {
                                 <FaThumbsUp className="icon" />
                                 Like
                                 </button>
-                                <button className="card-button" onClick={() => handleButtonClick(i,index,chat.content)}>
+                                <button className="card-button">
                                 <FaComment className="icon" />
-                                indic
+                                Comment
                                 </button>
                                 <button className="card-button">
                                 <FaShare className="icon" />
@@ -206,7 +206,25 @@ export class Comic extends Component {
         fetch('savechat')
         .then(response => response.json())
         .then(data => {
-             var assistantChat=data.filter(prevChat => prevChat.role === 'assistant')
+                  const groupedData = data.reduce((result, item) => {
+                    if (item.role === 'assistant') {
+                      if (result[item.title]) {
+                        result[item.title].content += ' ' + item.content;
+                      } else {
+                        result[item.title] = {
+                          title: item.title,
+                          role: item.role,
+                          content: item.content
+                        };
+                      }
+                    }
+                    return result;
+                  }, {});
+                  
+                  const mergedData = Object.values(groupedData);
+          
+          
+             var assistantChat=mergedData.filter(prevChat => prevChat.role === 'assistant')
                       .map(chat => ({
                         ...chat,
                         imageSrc: "https://gramener.com/comicgen/v1/comic?name=dee&angle=side&emotion=angry&pose=explaining&box=&boxcolor=%23000000&boxgap=&mirror=" ,
